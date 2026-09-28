@@ -13,7 +13,8 @@ function delay(ms){return new Promise(resolve=>setTimeout(resolve,ms))}
     ['implante-dentario-rio-das-ostras/index.html',domain+'/implante-dentario-rio-das-ostras/'],
     ['quanto-custa-implante-dentario/index.html',domain+'/quanto-custa-implante-dentario/'],
     ['implante-dentario-doi/index.html',domain+'/implante-dentario-doi/'],
-    ['enxerto-osseo-implante/index.html',domain+'/enxerto-osseo-implante/']
+    ['enxerto-osseo-implante/index.html',domain+'/enxerto-osseo-implante/'],
+    ['cirurgia-siso-rio-das-ostras/index.html',domain+'/cirurgia-siso-rio-das-ostras/']
   ];
   const files=[...pages.map(([f])=>f),'assets/styles.css','server.js','robots.txt','sitemap.xml'];
   for(const f of files)assert(fs.existsSync(f),'Missing '+f);
@@ -41,6 +42,9 @@ function delay(ms){return new Promise(resolve=>setTimeout(resolve,ms))}
   const home=fs.readFileSync('index.html','utf8');
   assert(home.includes('Rebeca Amaral | Centro de Implantes'),'New brand name missing');
   assert(home.includes('Cirurgia Oral e Planejamento Digital'),'Brand subtitle missing');
+  assert(home.includes('Implantes') && home.includes('Cirurgia de Siso'),'Home must position implants and wisdom tooth surgery');
+  assert(home.includes('/cirurgia-siso-rio-das-ostras/'),'Wisdom tooth surgery article link missing');
+  assert(home.includes('sisos inclusos') || home.includes('siso incluso'),'Home must mention included/impacted wisdom teeth');
   assert(home.includes('/assets/hero-rebeca.webp'),'Hero portrait missing');
   assert(home.includes('/assets/dra-rebeca.webp'),'Professional portrait missing');
   assert(home.includes('/assets/planejamento-digital.webp'),'Planning image missing');
@@ -64,6 +68,10 @@ function delay(ms){return new Promise(resolve=>setTimeout(resolve,ms))}
   assert(pain.includes('Implante dentário dói?'),'Pain article title missing');
   const graft=fs.readFileSync('enxerto-osseo-implante/index.html','utf8');
   assert(graft.includes('enxerto ósseo'),'Bone graft content missing');
+  const siso=fs.readFileSync('cirurgia-siso-rio-das-ostras/index.html','utf8');
+  assert(siso.includes('Cirurgia de siso em Rio das Ostras'),'Wisdom tooth surgery SEO title missing');
+  assert(siso.includes('inclusos') || siso.includes('impactados'),'Wisdom tooth surgery page must cover included or impacted cases');
+  assert(siso.includes('avaliação clínica'),'Wisdom tooth surgery page must preserve individualized evaluation language');
 
   const port=34567;
   const child=spawn(process.execPath,['server.js'],{env:{...process.env,PORT:String(port)},stdio:'ignore'});
@@ -77,5 +85,5 @@ function delay(ms){return new Promise(resolve=>setTimeout(resolve,ms))}
     assert(!official.headers['x-robots-tag'],'Official domain must not receive noindex header');
     assert(child.exitCode===null,'Server crashed after malformed URL');
   } finally { child.kill(); }
-  console.log('OK - domínio oficial, indexação, sitemap, identidade, CTA, unidades, schema e servidor validados');
+  console.log('OK - domínio oficial, implantes, cirurgia de siso, indexação, sitemap, CTA, schema e servidor validados');
 })().catch(err=>{console.error(err);process.exit(1)});
