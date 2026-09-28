@@ -20,8 +20,19 @@ function delay(ms){return new Promise(resolve=>setTimeout(resolve,ms))}
   }
 
   const home=fs.readFileSync('index.html','utf8');
+  assert(home.includes('Rebeca Amaral | Centro de Implantes'),'New brand name missing');
+  assert(home.includes('Cirurgia Oral e Planejamento Digital'),'Brand subtitle missing');
+  assert(home.includes('/assets/hero-rebeca.webp'),'Hero portrait missing');
+  assert(home.includes('/assets/dra-rebeca.webp'),'Professional portrait missing');
+  assert(home.includes('/assets/planejamento-digital.webp'),'Planning image missing');
+  assert(home.includes('/assets/cirurgia-oral.webp'),'Surgery image missing');
   assert(home.includes('Agendar avaliação'),'CTA missing');
   assert(home.includes('noindex,nofollow'),'Staging must remain noindex');
+
+  for(const image of ['hero-rebeca.webp','dra-rebeca.webp','planejamento-digital.webp','cirurgia-oral.webp']){
+    assert(fs.existsSync(`assets/${image}`),`Missing assets/${image}`);
+  }
+
   const price=fs.readFileSync('quanto-custa-implante-dentario/index.html','utf8');
   assert(price.includes('FAQPage'),'FAQ schema missing');
 
@@ -35,5 +46,5 @@ function delay(ms){return new Promise(resolve=>setTimeout(resolve,ms))}
   } finally {
     child.kill();
   }
-  console.log('OK - estrutura, CTA, dados profissionais, schema e servidor validados');
+  console.log('OK - identidade, imagens, CTA, dados profissionais, schema e servidor validados');
 })().catch(err=>{console.error(err);process.exit(1)});
