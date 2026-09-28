@@ -1,0 +1,1 @@
+document.addEventListener('click',e=>{const a=e.target.closest('[data-track]');if(!a)return;try{window.dataLayer=window.dataLayer||[];window.dataLayer.push({event:a.dataset.track,page:location.pathname});}catch(_){}});
