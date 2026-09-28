@@ -9,6 +9,16 @@ function delay(ms){return new Promise(resolve=>setTimeout(resolve,ms))}
 (async()=>{
   const files=['index.html','implante-dentario-rio-das-ostras/index.html','quanto-custa-implante-dentario/index.html','assets/styles.css','server.js'];
   for(const f of files)assert(fs.existsSync(f),'Missing '+f);
+
+  const htmlFiles=files.filter(f=>f.endsWith('.html'));
+  const expected=['CRO-RJ 55986','5522988187903','Cidade Praiana','Centro — Rio das Ostras, RJ'];
+  for(const f of htmlFiles){
+    const html=fs.readFileSync(f,'utf8');
+    for(const value of expected)assert(html.includes(value),`${f} missing ${value}`);
+    assert(!html.includes('[PREENCHER]'),`${f} still has placeholder`);
+    assert(!html.includes('Conectar WhatsApp'),`${f} still has placeholder CTA`);
+  }
+
   const home=fs.readFileSync('index.html','utf8');
   assert(home.includes('Agendar avaliação'),'CTA missing');
   assert(home.includes('noindex,nofollow'),'Staging must remain noindex');
@@ -25,5 +35,5 @@ function delay(ms){return new Promise(resolve=>setTimeout(resolve,ms))}
   } finally {
     child.kill();
   }
-  console.log('OK - estrutura, CTA, schema e servidor validados');
+  console.log('OK - estrutura, CTA, dados profissionais, schema e servidor validados');
 })().catch(err=>{console.error(err);process.exit(1)});
