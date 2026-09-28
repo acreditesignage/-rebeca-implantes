@@ -7,7 +7,7 @@ function request(port,path){return new Promise((resolve,reject)=>{const req=http
 function delay(ms){return new Promise(resolve=>setTimeout(resolve,ms))}
 
 (async()=>{
-  const files=['index.html','implante-dentario-rio-das-ostras/index.html','quanto-custa-implante-dentario/index.html','assets/styles.css','server.js'];
+  const files=['index.html','implante-dentario-rio-das-ostras/index.html','quanto-custa-implante-dentario/index.html','implante-dentario-doi/index.html','enxerto-osseo-implante/index.html','assets/styles.css','server.js'];
   for(const f of files)assert(fs.existsSync(f),'Missing '+f);
 
   const htmlFiles=files.filter(f=>f.endsWith('.html'));
@@ -20,6 +20,7 @@ function delay(ms){return new Promise(resolve=>setTimeout(resolve,ms))}
     assert(!html.includes('Agendar avaliação'),`${f} still has old CTA label`);
     assert(!html.includes('Agendar pelo WhatsApp'),`${f} still has old WhatsApp CTA label`);
     assert(html.includes('Agende uma consulta'),`${f} missing new CTA label`);
+    assert(html.includes('noindex,nofollow'),'Staging must remain noindex');
   }
 
   const home=fs.readFileSync('index.html','utf8');
@@ -29,8 +30,15 @@ function delay(ms){return new Promise(resolve=>setTimeout(resolve,ms))}
   assert(home.includes('/assets/dra-rebeca.webp'),'Professional portrait missing');
   assert(home.includes('/assets/planejamento-digital.webp'),'Planning image missing');
   assert(home.includes('/assets/cirurgia-oral.webp'),'Surgery image missing');
-  assert(home.includes('Agende uma consulta'),'CTA missing');
-  assert(home.includes('noindex,nofollow'),'Staging must remain noindex');
+  assert(home.includes('"@type":"Dentist"') || home.includes('"@type": "Dentist"'),'Dentist schema missing');
+  assert(home.includes('"@type":"Person"') || home.includes('"@type": "Person"'),'Person schema missing');
+  assert(home.includes('/implante-dentario-doi/'),'Pain article link missing');
+  assert(home.includes('/enxerto-osseo-implante/'),'Bone graft article link missing');
+  assert(home.includes('CardioMed'),'CardioMed unit missing');
+  assert(home.includes('Rua Santa Catarina, 619'),'CardioMed address missing');
+  assert(home.includes('2º andar'),'CardioMed floor missing');
+  assert(home.includes('Forte Farma'),'CardioMed location reference missing');
+  assert(home.includes('(22) 99923-4261'),'CardioMed phone missing');
 
   for(const image of ['hero-rebeca.webp','dra-rebeca.webp','planejamento-digital.webp','cirurgia-oral.webp']){
     assert(fs.existsSync(`assets/${image}`),`Missing assets/${image}`);
@@ -38,6 +46,11 @@ function delay(ms){return new Promise(resolve=>setTimeout(resolve,ms))}
 
   const price=fs.readFileSync('quanto-custa-implante-dentario/index.html','utf8');
   assert(price.includes('FAQPage'),'FAQ schema missing');
+
+  const pain=fs.readFileSync('implante-dentario-doi/index.html','utf8');
+  assert(pain.includes('Implante dentário dói?'),'Pain article title missing');
+  const graft=fs.readFileSync('enxerto-osseo-implante/index.html','utf8');
+  assert(graft.includes('enxerto ósseo'),'Bone graft content missing');
 
   const port=34567;
   const child=spawn(process.execPath,['server.js'],{env:{...process.env,PORT:String(port)},stdio:'ignore'});
@@ -49,5 +62,5 @@ function delay(ms){return new Promise(resolve=>setTimeout(resolve,ms))}
   } finally {
     child.kill();
   }
-  console.log('OK - identidade, imagens, CTA, dados profissionais, schema e servidor validados');
+  console.log('OK - identidade, SEO base, novas páginas, CTA, unidades, dados profissionais, schema e servidor validados');
 })().catch(err=>{console.error(err);process.exit(1)});
