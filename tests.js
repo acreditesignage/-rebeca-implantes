@@ -17,6 +17,9 @@ function delay(ms){return new Promise(resolve=>setTimeout(resolve,ms))}
     for(const value of expected)assert(html.includes(value),`${f} missing ${value}`);
     assert(!html.includes('[PREENCHER]'),`${f} still has placeholder`);
     assert(!html.includes('Conectar WhatsApp'),`${f} still has placeholder CTA`);
+    assert(!html.includes('Agendar avaliação'),`${f} still has old CTA label`);
+    assert(!html.includes('Agendar pelo WhatsApp'),`${f} still has old WhatsApp CTA label`);
+    assert(html.includes('Agende uma consulta'),`${f} missing new CTA label`);
   }
 
   const home=fs.readFileSync('index.html','utf8');
@@ -26,7 +29,7 @@ function delay(ms){return new Promise(resolve=>setTimeout(resolve,ms))}
   assert(home.includes('/assets/dra-rebeca.webp'),'Professional portrait missing');
   assert(home.includes('/assets/planejamento-digital.webp'),'Planning image missing');
   assert(home.includes('/assets/cirurgia-oral.webp'),'Surgery image missing');
-  assert(home.includes('Agendar avaliação'),'CTA missing');
+  assert(home.includes('Agende uma consulta'),'CTA missing');
   assert(home.includes('noindex,nofollow'),'Staging must remain noindex');
 
   for(const image of ['hero-rebeca.webp','dra-rebeca.webp','planejamento-digital.webp','cirurgia-oral.webp']){
