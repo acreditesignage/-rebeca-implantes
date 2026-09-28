@@ -3,16 +3,23 @@ const http=require('http');
 const {spawn}=require('child_process');
 
 function assert(condition,message){if(!condition)throw new Error(message)}
-function request(port,path){return new Promise((resolve,reject)=>{const req=http.get({host:'127.0.0.1',port,path},res=>{res.resume();res.on('end',()=>resolve(res.statusCode))});req.on('error',reject)})}
+function request(port,path,headers={}){return new Promise((resolve,reject)=>{const req=http.get({host:'127.0.0.1',port,path,headers},res=>{res.resume();res.on('end',()=>resolve({status:res.statusCode,headers:res.headers}))});req.on('error',reject)})}
 function delay(ms){return new Promise(resolve=>setTimeout(resolve,ms))}
 
 (async()=>{
-  const files=['index.html','implante-dentario-rio-das-ostras/index.html','quanto-custa-implante-dentario/index.html','implante-dentario-doi/index.html','enxerto-osseo-implante/index.html','assets/styles.css','server.js'];
+  const domain='https://drarebecamaral.com.br';
+  const pages=[
+    ['index.html',domain+'/'],
+    ['implante-dentario-rio-das-ostras/index.html',domain+'/implante-dentario-rio-das-ostras/'],
+    ['quanto-custa-implante-dentario/index.html',domain+'/quanto-custa-implante-dentario/'],
+    ['implante-dentario-doi/index.html',domain+'/implante-dentario-doi/'],
+    ['enxerto-osseo-implante/index.html',domain+'/enxerto-osseo-implante/']
+  ];
+  const files=[...pages.map(([f])=>f),'assets/styles.css','server.js','robots.txt','sitemap.xml'];
   for(const f of files)assert(fs.existsSync(f),'Missing '+f);
 
-  const htmlFiles=files.filter(f=>f.endsWith('.html'));
   const expected=['CRO-RJ 55986','5522988187903','Cidade Praiana','Centro — Rio das Ostras, RJ'];
-  for(const f of htmlFiles){
+  for(const [f,canonical] of pages){
     const html=fs.readFileSync(f,'utf8');
     for(const value of expected)assert(html.includes(value),`${f} missing ${value}`);
     assert(!html.includes('[PREENCHER]'),`${f} still has placeholder`);
@@ -20,8 +27,16 @@ function delay(ms){return new Promise(resolve=>setTimeout(resolve,ms))}
     assert(!html.includes('Agendar avaliação'),`${f} still has old CTA label`);
     assert(!html.includes('Agendar pelo WhatsApp'),`${f} still has old WhatsApp CTA label`);
     assert(html.includes('Agende uma consulta'),`${f} missing new CTA label`);
-    assert(html.includes('noindex,nofollow'),'Staging must remain noindex');
+    assert(!html.includes('noindex,nofollow'),`${f} must be indexable on official domain`);
+    assert(html.includes('index,follow'),`${f} missing index directive`);
+    assert(html.includes(`<link rel="canonical" href="${canonical}">`),`${f} missing canonical ${canonical}`);
   }
+
+  const robots=fs.readFileSync('robots.txt','utf8');
+  assert(robots.includes('Allow: /'),'robots must allow crawling');
+  assert(robots.includes('Sitemap: https://drarebecamaral.com.br/sitemap.xml'),'robots missing sitemap');
+  const sitemap=fs.readFileSync('sitemap.xml','utf8');
+  for(const [,canonical] of pages)assert(sitemap.includes(`<loc>${canonical}</loc>`),`sitemap missing ${canonical}`);
 
   const home=fs.readFileSync('index.html','utf8');
   assert(home.includes('Rebeca Amaral | Centro de Implantes'),'New brand name missing');
@@ -32,6 +47,7 @@ function delay(ms){return new Promise(resolve=>setTimeout(resolve,ms))}
   assert(home.includes('/assets/cirurgia-oral.webp'),'Surgery image missing');
   assert(home.includes('"@type":"Dentist"') || home.includes('"@type": "Dentist"'),'Dentist schema missing');
   assert(home.includes('"@type":"Person"') || home.includes('"@type": "Person"'),'Person schema missing');
+  assert(home.includes('https://drarebecamaral.com.br/#centro'),'Schema official URL missing');
   assert(home.includes('/implante-dentario-doi/'),'Pain article link missing');
   assert(home.includes('/enxerto-osseo-implante/'),'Bone graft article link missing');
   assert(home.includes('CardioMed'),'CardioMed unit missing');
@@ -40,13 +56,10 @@ function delay(ms){return new Promise(resolve=>setTimeout(resolve,ms))}
   assert(home.includes('Forte Farma'),'CardioMed location reference missing');
   assert(home.includes('(22) 99923-4261'),'CardioMed phone missing');
 
-  for(const image of ['hero-rebeca.webp','dra-rebeca.webp','planejamento-digital.webp','cirurgia-oral.webp']){
-    assert(fs.existsSync(`assets/${image}`),`Missing assets/${image}`);
-  }
+  for(const image of ['hero-rebeca.webp','dra-rebeca.webp','planejamento-digital.webp','cirurgia-oral.webp'])assert(fs.existsSync(`assets/${image}`),`Missing assets/${image}`);
 
   const price=fs.readFileSync('quanto-custa-implante-dentario/index.html','utf8');
   assert(price.includes('FAQPage'),'FAQ schema missing');
-
   const pain=fs.readFileSync('implante-dentario-doi/index.html','utf8');
   assert(pain.includes('Implante dentário dói?'),'Pain article title missing');
   const graft=fs.readFileSync('enxerto-osseo-implante/index.html','utf8');
@@ -56,11 +69,13 @@ function delay(ms){return new Promise(resolve=>setTimeout(resolve,ms))}
   const child=spawn(process.execPath,['server.js'],{env:{...process.env,PORT:String(port)},stdio:'ignore'});
   try{
     await delay(300);
-    assert(await request(port,'/health')===200,'Health endpoint failed');
-    assert(await request(port,'/%')===400,'Malformed URL encoding must return 400');
+    assert((await request(port,'/health')).status===200,'Health endpoint failed');
+    assert((await request(port,'/%')).status===400,'Malformed URL encoding must return 400');
+    const staging=await request(port,'/',{Host:'rebeca-implantes-app-production.up.railway.app'});
+    assert(staging.headers['x-robots-tag']==='noindex, nofollow','Railway hostname must remain noindex');
+    const official=await request(port,'/',{Host:'drarebecamaral.com.br'});
+    assert(!official.headers['x-robots-tag'],'Official domain must not receive noindex header');
     assert(child.exitCode===null,'Server crashed after malformed URL');
-  } finally {
-    child.kill();
-  }
-  console.log('OK - identidade, SEO base, novas páginas, CTA, unidades, dados profissionais, schema e servidor validados');
+  } finally { child.kill(); }
+  console.log('OK - domínio oficial, indexação, sitemap, identidade, CTA, unidades, schema e servidor validados');
 })().catch(err=>{console.error(err);process.exit(1)});
