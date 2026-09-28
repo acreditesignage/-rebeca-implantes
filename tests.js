@@ -34,6 +34,11 @@ function delay(ms){return new Promise(resolve=>setTimeout(resolve,ms))}
   assert(home.includes('"@type":"Person"') || home.includes('"@type": "Person"'),'Person schema missing');
   assert(home.includes('/implante-dentario-doi/'),'Pain article link missing');
   assert(home.includes('/enxerto-osseo-implante/'),'Bone graft article link missing');
+  assert(home.includes('CardioMed'),'CardioMed unit missing');
+  assert(home.includes('Rua Santa Catarina, 619'),'CardioMed address missing');
+  assert(home.includes('2º andar'),'CardioMed floor missing');
+  assert(home.includes('Forte Farma'),'CardioMed location reference missing');
+  assert(home.includes('(22) 99923-4261'),'CardioMed phone missing');
 
   for(const image of ['hero-rebeca.webp','dra-rebeca.webp','planejamento-digital.webp','cirurgia-oral.webp']){
     assert(fs.existsSync(`assets/${image}`),`Missing assets/${image}`);
@@ -57,5 +62,5 @@ function delay(ms){return new Promise(resolve=>setTimeout(resolve,ms))}
   } finally {
     child.kill();
   }
-  console.log('OK - identidade, SEO base, novas páginas, CTA, dados profissionais, schema e servidor validados');
+  console.log('OK - identidade, SEO base, novas páginas, CTA, unidades, dados profissionais, schema e servidor validados');
 })().catch(err=>{console.error(err);process.exit(1)});
