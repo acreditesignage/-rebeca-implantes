@@ -1,1 +1,1 @@
-{"name":"rebeca-implantes","version":"0.1.0","private":true,"scripts":{"start":"node server.js","test":"node tests.js"},"engines":{"node":">=18"}}
+{"name":"rebeca-implantes","version":"0.1.0","private":true,"scripts":{"start":"node server.js","test":"node tests.js && node tests-clinicorp.js"},"engines":{"node":">=18"}}
