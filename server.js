@@ -4,7 +4,19 @@ const path=require('path');
 
 const root=path.resolve(__dirname);
 const officialHost='drarebecamaral.com.br';
-const mimes={'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'text/javascript; charset=utf-8','.txt':'text/plain; charset=utf-8','.xml':'application/xml; charset=utf-8'};
+const mimes={
+  '.html':'text/html; charset=utf-8',
+  '.css':'text/css; charset=utf-8',
+  '.js':'text/javascript; charset=utf-8',
+  '.txt':'text/plain; charset=utf-8',
+  '.xml':'application/xml; charset=utf-8',
+  '.webp':'image/webp',
+  '.svg':'image/svg+xml',
+  '.ico':'image/x-icon',
+  '.png':'image/png',
+  '.jpg':'image/jpeg',
+  '.jpeg':'image/jpeg'
+};
 
 function fileForRequest(rawUrl){
   let pathname;
@@ -23,12 +35,21 @@ http.createServer((req,res)=>{
     return res.end();
   }
   if(req.url==='/health'){res.writeHead(200);return res.end('ok')}
+  if(req.url.split('?')[0]==='/favicon.ico'){
+    res.writeHead(301,{Location:'/favicon.svg','Cache-Control':'public, max-age=86400'});
+    return res.end();
+  }
   const resolved=fileForRequest(req.url);
   if(resolved.status){res.writeHead(resolved.status);return res.end(resolved.status===400?'Bad request':'Forbidden')}
   fs.readFile(resolved.file,(error,data)=>{
     if(error){res.writeHead(404);return res.end('Not found')}
-    const ext=path.extname(resolved.file);
-    const headers={'Content-Type':mimes[ext]||'application/octet-stream','Cache-Control':ext==='.html'?'no-cache':'public, max-age=86400'};
+    const ext=path.extname(resolved.file).toLowerCase();
+    const headers={
+      'Content-Type':mimes[ext]||'application/octet-stream',
+      'Cache-Control':ext==='.html'?'no-cache':'public, max-age=86400',
+      'X-Content-Type-Options':'nosniff',
+      'Referrer-Policy':'strict-origin-when-cross-origin'
+    };
     if(host&&host!==officialHost)headers['X-Robots-Tag']='noindex, nofollow';
     res.writeHead(200,headers);
     res.end(data);
