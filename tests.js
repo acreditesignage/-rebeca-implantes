@@ -16,7 +16,7 @@ function delay(ms){return new Promise(resolve=>setTimeout(resolve,ms))}
     ['enxerto-osseo-implante/index.html',domain+'/enxerto-osseo-implante/'],
     ['cirurgia-siso-rio-das-ostras/index.html',domain+'/cirurgia-siso-rio-das-ostras/']
   ];
-  const files=[...pages.map(([f])=>f),'assets/styles.css','server.js','robots.txt','sitemap.xml','favicon.svg'];
+  const files=[...pages.map(([f])=>f),'assets/styles.css','assets/app.js','server.js','robots.txt','sitemap.xml','favicon.svg'];
   for(const f of files)assert(fs.existsSync(f),'Missing '+f);
 
   const expected=['CRO-RJ 55986','5522988187903','Cidade Praiana','Centro — Rio das Ostras, RJ'];
@@ -68,6 +68,22 @@ function delay(ms){return new Promise(resolve=>setTimeout(resolve,ms))}
   assert(home.includes('Forte Farma'),'CardioMed location reference missing');
   assert(home.includes('(22) 99923-4261'),'CardioMed phone missing');
 
+  // Premium visual system: preserve SEO/content while elevating hierarchy and motion.
+  assert(home.includes('class="premium-trust"'),'Home missing premium trust strip');
+  assert(home.includes('class="section split planning-premium reveal"'),'Planning section missing premium dark treatment');
+  assert(home.includes('class="hero reveal"'),'Hero missing reveal treatment');
+  assert(home.includes('Diagnóstico • Tecnologia • Clareza'),'Premium positioning line missing');
+
+  const styles=fs.readFileSync('assets/styles.css','utf8');
+  assert(styles.includes('--deep:#0b1714'),'Premium deep color token missing');
+  assert(styles.includes('.planning-premium'),'Premium planning section styles missing');
+  assert(styles.includes('.premium-trust'),'Premium trust strip styles missing');
+  assert(styles.includes('@media (prefers-reduced-motion:reduce)'),'Reduced-motion accessibility styles missing');
+
+  const app=fs.readFileSync('assets/app.js','utf8');
+  assert(app.includes('IntersectionObserver'),'Scroll reveal observer missing');
+  assert(app.includes('prefers-reduced-motion'),'Motion preference handling missing');
+
   for(const image of ['hero-rebeca.webp','dra-rebeca.webp','planejamento-digital.webp','cirurgia-oral.webp'])assert(fs.existsSync(`assets/${image}`),`Missing assets/${image}`);
 
   const price=fs.readFileSync('quanto-custa-implante-dentario/index.html','utf8');
@@ -104,5 +120,5 @@ function delay(ms){return new Promise(resolve=>setTimeout(resolve,ms))}
     assert(legacyFavicon.headers.location==='/favicon.svg','Legacy favicon.ico must redirect to favicon.svg');
     assert(child.exitCode===null,'Server crashed after malformed URL');
   } finally { child.kill(); }
-  console.log('OK - domínio oficial, SEO técnico, favicon, Open Graph, schema, sitemap, CTA e servidor validados');
+  console.log('OK - domínio oficial, SEO técnico, visual premium, favicon, Open Graph, schema, sitemap, CTA e servidor validados');
 })().catch(err=>{console.error(err);process.exit(1)});
