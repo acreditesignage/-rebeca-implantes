@@ -8,6 +8,7 @@ function delay(ms){return new Promise(resolve=>setTimeout(resolve,ms))}
 
 (async()=>{
   const domain='https://drarebecamaral.com.br';
+  const assetVersion='20260929-premium';
   const pages=[
     ['index.html',domain+'/'],
     ['implante-dentario-rio-das-ostras/index.html',domain+'/implante-dentario-rio-das-ostras/'],
@@ -37,6 +38,8 @@ function delay(ms){return new Promise(resolve=>setTimeout(resolve,ms))}
     assert(html.includes(`<meta property="og:url" content="${canonical}">`),`${f} missing Open Graph canonical URL`);
     assert(html.includes('<meta property="og:image" content="https://drarebecamaral.com.br/assets/'),`${f} missing absolute Open Graph image`);
     assert(html.includes('<meta name="twitter:card" content="summary_large_image">'),`${f} missing Twitter card metadata`);
+    assert(html.includes(`/assets/styles.css?v=${assetVersion}`),`${f} missing versioned stylesheet`);
+    assert(html.includes(`/assets/app.js?v=${assetVersion}`),`${f} missing versioned script`);
   }
 
   const robots=fs.readFileSync('robots.txt','utf8');
@@ -120,5 +123,5 @@ function delay(ms){return new Promise(resolve=>setTimeout(resolve,ms))}
     assert(legacyFavicon.headers.location==='/favicon.svg','Legacy favicon.ico must redirect to favicon.svg');
     assert(child.exitCode===null,'Server crashed after malformed URL');
   } finally { child.kill(); }
-  console.log('OK - domínio oficial, SEO técnico, visual premium, favicon, Open Graph, schema, sitemap, CTA e servidor validados');
+  console.log('OK - domínio oficial, SEO técnico, visual premium, cache bust, favicon, Open Graph, schema, sitemap, CTA e servidor validados');
 })().catch(err=>{console.error(err);process.exit(1)});
