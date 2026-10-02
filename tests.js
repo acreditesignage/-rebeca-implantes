@@ -98,7 +98,7 @@ function delay(ms){return new Promise(resolve=>setTimeout(resolve,ms))}
   const siso=fs.readFileSync('cirurgia-siso-rio-das-ostras/index.html','utf8');
   assert(siso.includes('Cirurgia de siso em Rio das Ostras'),'Wisdom tooth surgery SEO title missing');
   assert(siso.includes('inclusos') || siso.includes('impactados'),'Wisdom tooth surgery page must cover included or impacted cases');
-  assert(siso.includes('avaliação clínica'),'Wisdom tooth surgery page must preserve individualized evaluation language');
+  assert(siso.includes('consulta clínica'),'Wisdom tooth surgery page must preserve individualized evaluation language');
 
   const port=34567;
   const child=spawn(process.execPath,['server.js'],{env:{...process.env,PORT:String(port)},stdio:'ignore'});
