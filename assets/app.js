@@ -50,7 +50,9 @@ document.addEventListener('click',e=>{const a=e.target.closest('[data-track]');i
     if(pending||!form.reportValidity())return;
     const fields=new FormData(form);
     const data={name:fields.get('name'),phone:fields.get('phone'),treatment:fields.get('treatment'),unit:fields.get('unit'),
-      message:fields.get('message'),company:fields.get('company'),consent:fields.get('consent')==='on',page:location.pathname.slice(0,250)};
+      message:fields.get('message'),company:fields.get('company'),consent:fields.get('consent')==='on',
+      page:location.pathname.slice(0,225)+
+        (new URLSearchParams(location.search).get('utm_source')?.toLowerCase()==='tiktok'?'?utm_source=tiktok':'')};
     const payload=JSON.stringify(data);
     if(previousPayload&&previousPayload!==payload)requestId=crypto.randomUUID();
     previousPayload=payload;
