@@ -8,7 +8,7 @@ function delay(ms){return new Promise(resolve=>setTimeout(resolve,ms))}
 
 (async()=>{
   const domain='https://drarebecamaral.com.br';
-  const assetVersion='20260929-premium';
+  const assetVersion='odontoflow-20261010';
   const pages=[
     ['index.html',domain+'/'],
     ['implante-dentario-rio-das-ostras/index.html',domain+'/implante-dentario-rio-das-ostras/'],
