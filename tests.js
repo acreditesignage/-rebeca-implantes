@@ -15,7 +15,8 @@ function delay(ms){return new Promise(resolve=>setTimeout(resolve,ms))}
     ['quanto-custa-implante-dentario/index.html',domain+'/quanto-custa-implante-dentario/'],
     ['implante-dentario-doi/index.html',domain+'/implante-dentario-doi/'],
     ['enxerto-osseo-implante/index.html',domain+'/enxerto-osseo-implante/'],
-    ['cirurgia-siso-rio-das-ostras/index.html',domain+'/cirurgia-siso-rio-das-ostras/']
+    ['cirurgia-siso-rio-das-ostras/index.html',domain+'/cirurgia-siso-rio-das-ostras/'],
+    ['odontopediatria-rio-das-ostras/index.html',domain+'/odontopediatria-rio-das-ostras/']
   ];
   const files=[...pages.map(([f])=>f),'assets/styles.css','assets/app.js','server.js','robots.txt','sitemap.xml','favicon.svg'];
   for(const f of files)assert(fs.existsSync(f),'Missing '+f);
@@ -65,6 +66,14 @@ function delay(ms){return new Promise(resolve=>setTimeout(resolve,ms))}
   assert(home.includes('"image":"https://drarebecamaral.com.br/assets/hero-rebeca.webp"'),'Dentist schema must expose an image');
   assert(home.includes('/implante-dentario-doi/'),'Pain article link missing');
   assert(home.includes('/enxerto-osseo-implante/'),'Bone graft article link missing');
+  assert(home.includes('Odontopediatria com a Dra. Raquel'),'Home must present new clinical service');
+  assert(home.includes('/odontopediatria-rio-das-ostras/'),'Home must link the pediatric service page');
+  assert(home.includes('odontopediatria-rio-das-ostras/#servico'),'Home must expose service structured data');
+  const pediatricPage=fs.readFileSync('odontopediatria-rio-das-ostras/index.html','utf8');
+  assert(pediatricPage.includes('<h1>Odontopediatria em Rio das Ostras</h1>'),'Pediatric landing page title missing');
+  assert(pediatricPage.includes('Dra. Raquel'),'Pediatric clinician name missing');
+  assert(pediatricPage.includes('data-track="cta_whatsapp_odontopediatria"'),'Pediatric page must offer route-specific CTA');
+  assert(!pediatricPage.includes('Especialista em Odontopediatria'),'Do not claim specialist qualification without verified CRO');
   assert(home.includes('CardioMed'),'CardioMed unit missing');
   assert(home.includes('Rua Santa Catarina, 619'),'CardioMed address missing');
   assert(home.includes('2º andar'),'CardioMed floor missing');

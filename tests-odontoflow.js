@@ -38,6 +38,11 @@ const {once}=require('node:events');
    assert.equal((await post(tikTokLead)).status,200);
    assert.equal(forwarded.length,2);
    assert.equal(forwarded[1].body.page,'/?utm_source=tiktok');
+   const pediatricLead={...data,requestId:randomUUID(),treatment:'Odontopediatria',
+     message:'Quero informações sobre consulta infantil',page:'/odontopediatria-rio-das-ostras/'};
+   assert.equal((await post(pediatricLead)).status,200,'Odontopediatria lead should be accepted');
+   assert.equal(forwarded.length,3);
+   assert.equal(forwarded[2].body.treatment,'Odontopediatria');
    assert.equal((await post({...data,message:'x'.repeat(9000)})).status,413);
    const javascript=fs.readFileSync('assets/app.js','utf8');
    assert.ok(javascript.includes('/api/odontoflow/contact'));
