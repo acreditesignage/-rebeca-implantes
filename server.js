@@ -38,7 +38,7 @@ async function websiteContact(req,res){
   const phone=typeof body.phone==='string'?body.phone.replace(/\D/g,''):'';
   const normalized=phone.length===10||phone.length===11?'55'+phone:phone;
   if(typeof body.name!=='string'||body.name.trim().length<2||body.name.length>100||
-    !/^55[1-9]\d{9,10}$/.test(normalized)||!['Implante dentário','Cirurgia de siso','Outro atendimento'].includes(body.treatment)||
+    !/^55[1-9]\d{9,10}$/.test(normalized)||!['Implante dentário','Cirurgia de siso','Odontopediatria','Outro atendimento'].includes(body.treatment)||
     !['Centro','Cidade Praiana','Ainda não sei'].includes(body.unit)||typeof body.message!=='string'||
     body.message.trim().length<2||body.message.length>1500||body.consent!==true||
     (body.company!==undefined&&body.company!=='')||typeof body.page!=='string'||body.page.length>250||
