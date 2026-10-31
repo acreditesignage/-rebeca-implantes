@@ -100,11 +100,19 @@ function delay(ms){return new Promise(resolve=>setTimeout(resolve,ms))}
   assert(siso.includes('inclusos') || siso.includes('impactados'),'Wisdom tooth surgery page must cover included or impacted cases');
   assert(siso.includes('consulta clínica'),'Wisdom tooth surgery page must preserve individualized evaluation language');
 
+  const whiteningUrl=domain+'/clareamento-dental-rio-das-ostras/';
+  const whitening=fs.readFileSync('clareamento-dental-rio-das-ostras/index.html','utf8');
+  for(const value of [whiteningUrl,'index,follow','/assets/styles.css?v='+assetVersion,'/assets/app.js?v='+assetVersion,'CRO-RJ 55986','5522999234261','Cidade Praiana','moldeira'])assert(whitening.includes(value),'Whitening page missing '+value);
+  assert(!whitening.includes('5522988187903'),'Whitening page must use the Cidade Praiana WhatsApp');
+  assert(home.includes('/clareamento-dental-rio-das-ostras/'),'Home missing whitening link');
+  assert(sitemap.includes(`<loc>${whiteningUrl}</loc>`),'Sitemap missing whitening URL');
+
   const port=34567;
   const child=spawn(process.execPath,['server.js'],{env:{...process.env,PORT:String(port)},stdio:'ignore'});
   try{
     await delay(300);
     assert((await request(port,'/health')).status===200,'Health endpoint failed');
+    assert((await request(port,'/clareamento-dental-rio-das-ostras/',{Host:'drarebecamaral.com.br'})).status===200,'Whitening route failed');
     assert((await request(port,'/%')).status===400,'Malformed URL encoding must return 400');
     const staging=await request(port,'/',{Host:'rebeca-implantes-app-production.up.railway.app'});
     assert(staging.headers['x-robots-tag']==='noindex, nofollow','Railway hostname must remain noindex');
