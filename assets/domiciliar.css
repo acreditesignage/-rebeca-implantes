@@ -1,0 +1,45 @@
+/* Página e chamada de atendimento domiciliar; escopo isolado do restante do site */
+.homecare-feature{max-width:var(--max);margin:26px auto 48px;padding:0 24px}
+.homecare-feature-inner{padding:42px 48px;border-radius:34px;background:linear-gradient(115deg,#e5ede7,#f8faf6);display:flex;align-items:center;justify-content:space-between;gap:35px;border:1px solid #d8e4dd}
+.homecare-feature h2{font-size:clamp(28px,3.5vw,44px);max-width:700px;margin:10px 0 14px}
+.homecare-feature p{color:var(--muted);max-width:660px;margin:0;font-size:16px}
+.homecare-feature .cta{white-space:nowrap}
+.homecare-hero{max-width:var(--max);margin:0 auto;padding:95px 24px 74px;display:grid;grid-template-columns:1.1fr .9fr;gap:68px;align-items:center}
+.homecare-hero h1{font-size:clamp(50px,6.7vw,82px)}
+.homecare-hero h1 span{display:block;color:var(--accent)}
+.homecare-subtitle{font-size:clamp(18px,2.1vw,23px);line-height:1.55;color:#334b40;max-width:660px}
+.homecare-empathy{font-size:16px;color:var(--muted);max-width:620px;line-height:1.7}
+.homecare-hero-photo{margin:0;position:relative;min-height:570px;border-radius:34px;overflow:hidden;background:#e3e8e2;box-shadow:var(--shadow)}
+.homecare-hero-photo img{height:570px;width:100%;object-fit:cover}
+.homecare-hero-photo figcaption{position:absolute;bottom:0;left:0;right:0;padding:48px 24px 22px;background:linear-gradient(transparent,rgba(0,0,0,.56));color:#fff;font-size:13px}
+.homecare-trust{max-width:var(--max);margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:0 24px 26px}
+.homecare-trust>div{padding:28px;background:#fff;border:1px solid var(--line);border-radius:22px}
+.homecare-trust span,.homecare-cards span{display:block;font-family:var(--display);color:var(--accent);margin-bottom:14px}
+.homecare-trust strong{display:block;font-size:17px}
+.homecare-trust p,.homecare-cards p{font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:0}
+.homecare-intro h2{max-width:790px}
+.homecare-wide{max-width:930px;font-size:18px;color:var(--muted);line-height:1.75}
+.homecare-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:35px}
+.homecare-cards>div{background:#fff;border:1px solid var(--line);padding:32px;border-radius:24px}
+.homecare-process{display:grid;grid-template-columns:1fr 1fr;gap:66px;align-items:center;background:var(--deep);color:#fff;max-width:1240px;border-radius:40px;padding:78px;margin-top:15px}
+.homecare-process .kicker{color:var(--mint)}
+.homecare-process p{color:#c6d2cb;line-height:1.75}
+.homecare-process .text-link{color:#d7ebe4}
+.homecare-steps{list-style:none;margin:0;padding:0;counter-reset:hc}
+.homecare-steps li{counter-increment:hc;display:grid;gap:5px;padding:22px 0 22px 55px;border-bottom:1px solid rgba(255,255,255,.15);position:relative}
+.homecare-steps li:before{content:"0" counter(hc);position:absolute;top:24px;left:0;font-family:var(--display);color:var(--mint)}
+.homecare-steps li strong{font-size:17px}
+.homecare-steps li span{font-size:14px;color:#bccbc3}
+.homecare-faq{max-width:950px}
+.homecare-faq details{border-bottom:1px solid var(--line);padding:20px 0}
+.homecare-faq summary{cursor:pointer;font-size:18px;font-weight:680;list-style:revert}
+.homecare-faq details p{font-size:15px;color:var(--muted);line-height:1.7}
+.homecare-last{padding-top:40px}
+.homecare-banner{background:linear-gradient(125deg,#24483e,#0b1714);color:#fff;border-radius:33px;padding:52px;display:flex;justify-content:space-between;align-items:center;gap:40px}
+.homecare-banner h2{max-width:660px}
+.homecare-banner p{color:#d3e1d9}
+.homecare-banner .kicker{color:#b9d7cc}
+.homecare-phone{font-size:14px;text-align:center;white-space:nowrap}
+@media(max-width:900px){.homecare-feature-inner,.homecare-banner{flex-direction:column;align-items:flex-start}.homecare-hero{gap:28px;grid-template-columns:1fr}.homecare-hero-photo{min-height:390px}.homecare-hero-photo img{height:390px}.homecare-process{grid-template-columns:1fr;padding:40px 28px;gap:18px}.homecare-trust,.homecare-cards{grid-template-columns:1fr}}
+@media(max-width:600px){.homecare-hero{padding:55px 20px 25px}.homecare-hero h1{font-size:clamp(43px,12vw,65px)}.homecare-hero-photo{min-height:360px}.homecare-hero-photo img{height:360px}.homecare-feature{margin:0 auto 32px;padding:0 20px}.homecare-feature-inner{padding:30px 25px}.homecare-feature .cta{white-space:normal}.homecare-banner{padding:33px 27px}.homecare-trust{padding:0 20px;gap:10px}.homecare-trust>div{padding:20px}.homecare-cards>div{padding:25px}.homecare-faq summary{font-size:16px}}
+@media(prefers-reduced-motion:reduce){.homecare-feature *,.homecare-hero *{scroll-behavior:auto}}
