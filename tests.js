@@ -42,14 +42,24 @@ function delay(ms){return new Promise(resolve=>setTimeout(resolve,ms))}
     assert(html.includes(`/assets/app.js?v=${assetVersion}`),`${f} missing versioned script`);
   }
 
+  const homecarePath='higienizacao-protese-protocolo-domiciliar/index.html';
+  assert(fs.existsSync(homecarePath),'Homecare page missing');
+  const homecare=fs.readFileSync(homecarePath,'utf8');
+  for(const token of ['CRO-RJ 55986','5522988187903','index,follow','Higienização','mobilidade reduzida','/assets/domiciliar.css'])
+    assert(homecare.includes(token),'Homecare page missing '+token);
+  assert(homecare.includes('<link rel="canonical" href="'+domain+'/higienizacao-protese-protocolo-domiciliar/">'),'Homecare canonical missing');
+  assert(fs.existsSync('assets/domiciliar.css'),'Homecare styles missing');
+
   const robots=fs.readFileSync('robots.txt','utf8');
   assert(robots.includes('Allow: /'),'robots must allow crawling');
   assert(robots.includes('Sitemap: https://drarebecamaral.com.br/sitemap.xml'),'robots missing sitemap');
   const sitemap=fs.readFileSync('sitemap.xml','utf8');
   for(const [,canonical] of pages)assert(sitemap.includes(`<loc>${canonical}</loc>`),`sitemap missing ${canonical}`);
 
+  assert(sitemap.includes('<loc>'+domain+'/higienizacao-protese-protocolo-domiciliar/</loc>'),'Homecare sitemap missing');
   const home=fs.readFileSync('index.html','utf8');
   assert(home.includes('Rebeca Amaral | Centro de Implantes'),'New brand name missing');
+  assert(home.includes('/higienizacao-protese-protocolo-domiciliar/'),'Homecare link missing from homepage');
   assert(home.includes('Cirurgia Oral e Planejamento Digital'),'Brand subtitle missing');
   assert(home.includes('Implantes') && home.includes('Cirurgia de Siso'),'Home must position implants and wisdom tooth surgery');
   assert(home.includes('/cirurgia-siso-rio-das-ostras/'),'Wisdom tooth surgery article link missing');
